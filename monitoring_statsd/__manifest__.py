@@ -9,7 +9,7 @@
  'category': 'category',
  'depends': ['base',
              'web',
-             'server_environment',
+             # 'server_environment',
              ],
  'website': 'http://www.camptocamp.com',
  'data': [],
