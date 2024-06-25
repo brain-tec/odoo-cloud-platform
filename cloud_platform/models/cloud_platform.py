@@ -70,7 +70,7 @@ class CloudPlatform(models.AbstractModel):
         self.check()
         if configs.filestore.location == "remote":
             self.env["ir.attachment"].sudo().force_storage()
-        _logger.info("cloud platform configured for {}".format(platform_kind))
+        _logger.info(f"cloud platform configured for {platform_kind}")
 
     @api.model
     def install(self):
@@ -105,7 +105,7 @@ class CloudPlatform(models.AbstractModel):
             prefix = os.environ["ODOO_SESSION_REDIS_PREFIX"]
             assert re.match(r"^[a-z-0-9]+-odoo-[a-z-0-9]+$", prefix), (
                 "ODOO_SESSION_REDIS_PREFIX must match '<client>-odoo-<env>'"
-                ", we got: '%s'" % (prefix,)
+                f", we got: '{prefix}'"
             )
 
     @api.model
@@ -126,5 +126,5 @@ class CloudPlatform(models.AbstractModel):
         self._check_redis(environment_name)
 
     def _register_hook(self):
-        super(CloudPlatform, self)._register_hook()
+        super()._register_hook()
         self.sudo().check()

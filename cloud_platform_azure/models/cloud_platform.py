@@ -19,13 +19,13 @@ class CloudPlatform(models.AbstractModel):
 
     @api.model
     def _filestore_kinds(self):
-        kinds = super(CloudPlatform, self)._filestore_kinds()
+        kinds = super()._filestore_kinds()
         kinds["azure"] = AZURE_STORE_KIND
         return kinds
 
     @api.model
     def _platform_kinds(self):
-        kinds = super(CloudPlatform, self)._platform_kinds()
+        kinds = super()._platform_kinds()
         kinds.append("azure")
         return kinds
 
@@ -103,14 +103,14 @@ class CloudPlatform(models.AbstractModel):
             if environment_name == "prod":
                 assert prod_bucket, (
                     "AZURE_STORAGE_NAME should match '^[a-z]+\\-[a-z]+\\-\\d+$', "
-                    "we got: '%s'" % (storage_name,)
+                    f"we got: '{storage_name}'"
                 )
             else:
                 # if we are using the prod bucket on another instance
                 # such as an integration, we must be sure to be in read only!
                 assert not prod_bucket, (
                     "AZURE_STORAGE_NAME should not match '^[a-z]+\\-[a-z]+\\-\\d+$', "
-                    "we got: '%s'" % (storage_name,)
+                    f"we got: '{storage_name}'"
                 )
 
         elif environment_name == "test":

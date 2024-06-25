@@ -32,7 +32,7 @@ class IrAttachment(models.Model):
     _inherit = "ir.attachment"
 
     def _get_stores(self):
-        return ["azure"] + super(IrAttachment, self)._get_stores()
+        return ["azure"] + super()._get_stores()
 
     @api.model
     def _get_blob_service_client(self):
@@ -111,7 +111,7 @@ class IrAttachment(models.Model):
     @api.model
     def _get_container_name(self):
         # Container naming rules:
-        # https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata#container-names  # noqa: B950
+        # https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata#container-names  # noqa: E501
         running_env = os.environ.get("RUNNING_ENV", "dev")
         storage_name = os.environ.get("AZURE_STORAGE_NAME", r"{env}-{db}")
         storage_name = storage_name.format(env=running_env, db=self.env.cr.dbname)
@@ -162,14 +162,14 @@ class IrAttachment(models.Model):
                 _logger.info("Attachment '%s' missing on object storage", fname)
             return read
         else:
-            return super(IrAttachment, self)._store_file_read(fname, bin_size)
+            return super()._store_file_read(fname, bin_size)
 
     @api.model
     def _store_file_write(self, key, bin_data):
         location = self.env.context.get("storage_location") or self._storage()
         if location == "azure":
             container_client = self._get_azure_container()
-            filename = "azure://%s/%s" % (container_client.container_name, key)
+            filename = f"azure://{container_client.container_name}/{key}"
             with io.BytesIO() as file:
                 blob_client = container_client.get_blob_client(key.lower())
                 file.write(bin_data)
@@ -189,7 +189,7 @@ class IrAttachment(models.Model):
                         _("The file could not be stored: %s") % str(error)
                     ) from None
         else:
-            _super = super(IrAttachment, self)
+            _super = super()
             filename = _super._store_file_write(key, bin_data)
         return filename
 
@@ -215,4 +215,4 @@ class IrAttachment(models.Model):
                 # user
                 _logger.exception("Error during deletion of the file %s" % fname)
         else:
-            super(IrAttachment, self)._store_file_delete(fname)
+            super()._store_file_delete(fname)

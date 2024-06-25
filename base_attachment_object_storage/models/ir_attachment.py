@@ -30,10 +30,6 @@ def clean_fs(files):
             try:
                 os.unlink(full_path)
             except OSError:
-                _logger.info(
-                    "_file_delete could not unlink %s", full_path, exc_info=True
-                )
-            except IOError:
                 # Harmless and needed for race conditions
                 _logger.info(
                     "_file_delete could not unlink %s", full_path, exc_info=True
@@ -124,7 +120,7 @@ class IrAttachment(models.Model):
         domain = []
         storage_config = self._get_storage_force_db_config()
         for mimetype_key, limit in storage_config.items():
-            part = [("mimetype", "=like", "{}%".format(mimetype_key))]
+            part = [("mimetype", "=like", f"{mimetype_key}%")]
             if limit:
                 part = AND([part, [("file_size", "<=", limit)]])
             domain = OR([domain, part])
@@ -207,15 +203,15 @@ class IrAttachment(models.Model):
 
     def _store_file_read(self, fname):
         storage = fname.partition("://")[0]
-        raise NotImplementedError("No implementation for %s" % (storage,))
+        raise NotImplementedError(f"No implementation for {storage}")
 
     def _store_file_write(self, key, bin_data):
         storage = self.storage()
-        raise NotImplementedError("No implementation for %s" % (storage,))
+        raise NotImplementedError(f"No implementation for {storage}")
 
     def _store_file_delete(self, fname):
         storage = fname.partition("://")[0]
-        raise NotImplementedError("No implementation for %s" % (storage,))
+        raise NotImplementedError(f"No implementation for {storage}")
 
     @api.model
     def _file_write(self, bin_data, checksum):
@@ -249,7 +245,7 @@ class IrAttachment(models.Model):
         for store_name in self._get_stores():
             if self.is_storage_disabled(store_name):
                 continue
-            uri = "{}://".format(store_name)
+            uri = f"{store_name}://"
             if fname.startswith(uri):
                 return True
         return False
@@ -339,7 +335,7 @@ class IrAttachment(models.Model):
             (
                 normalize_domain(
                     [
-                        ("store_fname", "=like", "{}://%".format(storage)),
+                        ("store_fname", "=like", f"{storage}://%"),
                         # for res_field, see comment in
                         # _force_storage_to_object_storage
                         "|",
@@ -394,11 +390,11 @@ class IrAttachment(models.Model):
         # is required! It's because of an override of _search in ir.attachment
         # which adds ('res_field', '=', False) when the domain does not
         # contain 'res_field'.
-        # https://github.com/odoo/odoo/blob/9032617120138848c63b3cfa5d1913c5e5ad76db/odoo/addons/base/ir/ir_attachment.py#L344-L347  # noqa: B950
+        # https://github.com/odoo/odoo/blob/17.0/odoo/addons/base/models/ir_attachment.py#L523
 
         domain = [
             "!",
-            ("store_fname", "=like", "{}://%".format(storage)),
+            ("store_fname", "=like", f"{storage}://%"),
             "|",
             ("res_field", "=", False),
             ("res_field", "!=", False),
