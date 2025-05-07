@@ -13,9 +13,9 @@ from .strtobool import strtobool
 _logger = logging.getLogger(__name__)
 
 try:
-    from pythonjsonlogger import jsonlogger
+    from pythonjsonlogger.json import JsonFormatter
 except ImportError:
-    jsonlogger = None  # noqa
+    JsonFormatter = None  # noqa
     _logger.debug("Cannot 'import pythonjsonlogger'.")
 
 
@@ -23,10 +23,10 @@ def is_true(strval):
     return bool(strtobool(strval or "0".lower()))
 
 
-class OdooJsonFormatter(jsonlogger.JsonFormatter):
+class OdooJsonFormatter(JsonFormatter):
     def add_fields(self, log_record, record, message_dict):
         record.pid = os.getpid()
-        record.dbname = getattr(threading.currentThread(), "dbname", "?")
+        record.dbname = getattr(threading.current_thread(), "dbname", "?")
         record.request_id = getattr(threading.current_thread(), "request_uuid", None)
         record.uid = getattr(threading.current_thread(), "uid", None)
         _super = super()
