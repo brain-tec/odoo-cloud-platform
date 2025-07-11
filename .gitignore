@@ -1,9 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-/.venv
-/.pytest_cache
-/.ruff_cache
 
 # C extensions
 *.so
@@ -30,6 +27,9 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+/.pytest_cache
+/.ruff_cache
+/.venv
 htmlcov/
 .tox/
 .coverage
@@ -63,6 +63,9 @@ coverage.xml
 
 # Rope
 .ropeproject
+
+# Pyenv
+.python-version
 
 # Sphinx documentation
 docs/_build/

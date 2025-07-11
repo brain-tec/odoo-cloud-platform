@@ -3,11 +3,11 @@ name: tests
 on:
   pull_request:
     branches:
-      - "17.0*"
+      - "18.0*"
   push:
     branches:
-      - "17.0"
-      - "17.0-ocabot-*"
+      - "18.0"
+      - "18.0-ocabot-*"
 
 jobs:
   unreleased-deps:
@@ -35,18 +35,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - container: ghcr.io/oca/oca-ci/py3.10-odoo17.0:latest
-            include: "attachment_azure,cloud_platform_azure"
+          - container: ghcr.io/oca/oca-ci/py3.10-odoo18.0:latest
             name: test with Odoo
-          - container: ghcr.io/oca/oca-ci/py3.10-ocb17.0:latest
-            include: "attachment_azure,cloud_platform_azure"
-            name: test with OCB
-            makepot: "false"
-          - container: ghcr.io/oca/oca-ci/py3.10-odoo17.0:latest
-            exclude: "attachment_azure,cloud_platform_azure"
-            name: test with Odoo
-          - container: ghcr.io/oca/oca-ci/py3.10-ocb17.0:latest
-            exclude: "attachment_azure,cloud_platform_azure"
+          - container: ghcr.io/oca/oca-ci/py3.10-ocb18.0:latest
             name: test with OCB
             makepot: "false"
     services:
@@ -61,6 +52,8 @@ jobs:
     env:
       INCLUDE: "${{ matrix.include }}"
       EXCLUDE: "${{ matrix.exclude }}"
+      # Disable Redis check
+      ODOO_CLOUD_PLATFORM_UNSAFE: 1
     steps:
       - uses: actions/checkout@v3
         with:
