@@ -7,7 +7,6 @@ import re
 from collections import namedtuple
 
 from odoo import api, models
-from odoo.tools.config import config
 
 from .strtobool import strtobool
 
@@ -52,7 +51,7 @@ class CloudPlatform(models.AbstractModel):
         return configs.get(environment) or self._default_config()
 
     def _get_running_env(self):
-        environment_name = config["running_env"]
+        environment_name = os.environ.get("RUNNING_ENV")
         if environment_name.startswith("labs"):
             # We allow to have environments such as 'labs-logistics'
             # or 'labs-finance', in order to have the matching ribbon.
@@ -70,7 +69,7 @@ class CloudPlatform(models.AbstractModel):
         self.check()
         if configs.filestore.location == "remote":
             self.env["ir.attachment"].sudo().force_storage()
-        _logger.info("cloud platform configured for {}".format(platform_kind))
+        _logger.info(f"cloud platform configured for {platform_kind}")
 
     @api.model
     def install(self):
@@ -126,5 +125,5 @@ class CloudPlatform(models.AbstractModel):
         self._check_redis(environment_name)
 
     def _register_hook(self):
-        super(CloudPlatform, self)._register_hook()
+        super()._register_hook()
         self.sudo().check()
