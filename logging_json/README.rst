@@ -12,3 +12,7 @@ The json logging is activated with the environment variable
 In order to have the logs from the start of the server, you should add
 ``logging_json`` in the ``--load`` flag or in the ``server_wide_modules``
 option in the configuration file.
+
+When the module is loaded, each HTTP request is tagged with a unique
+``request_id`` so all logs produced while handling that request can be
+correlated.
