@@ -29,6 +29,14 @@ class OdooJsonFormatter(jsonlogger.JsonFormatter):
         record.dbname = getattr(threading.currentThread(), 'dbname', '?')
         record.request_id = getattr(threading.currentThread(), 'request_uuid', None)
         record.perf_info = getattr(record, 'perf_info', '')
+        if record.perf_info:
+            nb_queries, time_sql, time_python = record.perf_info.split()
+            time_total = str(float(time_sql) + float(time_python))
+            record.perf_info_nb_queries = nb_queries
+            record.perf_info_time_sql = time_sql
+            record.perf_info_time_python = time_python
+            record.perf_info_time_total = time_total
+
         _super = super(OdooJsonFormatter, self)
         return _super.add_fields(log_record, record, message_dict)
 
