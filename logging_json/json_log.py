@@ -31,8 +31,10 @@ class OdooJsonFormatter(jsonlogger.JsonFormatter):
         record.perf_info = getattr(record, 'perf_info', '')
         if record.perf_info:
             nb_queries, time_sql, time_python = record.perf_info.split()
-            time_total = str(float(time_sql) + float(time_python))
-            record.perf_info_nb_queries = nb_queries
+            time_sql = float(time_sql)
+            time_python = float(time_python)
+            time_total = time_sql + time_python
+            record.perf_info_nb_queries = int(nb_queries)
             record.perf_info_time_sql = time_sql
             record.perf_info_time_python = time_python
             record.perf_info_time_total = time_total
